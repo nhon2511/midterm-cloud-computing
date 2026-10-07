@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoStore = require('connect-mongo').MongoStore;
 const { engine } = require('express-handlebars');
 
 const app = express();
@@ -31,6 +33,19 @@ const bookSchema = new mongoose.Schema({
 const BookRead = connRead.model('Book', bookSchema, 'books');
 const BookWrite = connWrite.model('Book', bookSchema, 'books');
 
+// --- 2. STATELESS SESSION LƯU TRỰC TIẾP XUỐNG MONGODB ATLAS ---
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI_SESSION || process.env.MONGO_URI_WRITE,
+        collectionName: 'sessions',
+        autoRemove: 'disabled'
+    }),
+    cookie: { maxAge: 1000 * 60 * 60 * 24 }
+}));
+
 // Middleware truyền thông tin sinh viên & VAT xuống Footer
 app.use((req, res, next) => {
     res.locals.studentName = "Dương Khánh"; 
@@ -39,7 +54,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// --- CÁC ROUTE XỬ LÝ (READ / WRITE) ---
+// --- 3. CÁC ROUTE XỬ LÝ (READ / WRITE) ---
 
 // Trang chủ redirect về /books
 app.get('/', (req, res) => {
