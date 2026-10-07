@@ -1,0 +1,33 @@
+<h2>Danh sách Quản lý Sách</h2>
+
+<!-- Form thêm sách -->
+<form action="/books/add" method="POST">
+    <input type="text" name="productCode" placeholder="Mã sách (bắt đầu bằng 3 số cuối MSSV)" required>
+    <input type="text" name="title" placeholder="Tên sách" required>
+    <input type="number" name="price" placeholder="Giá gốc" required>
+    <button type="submit">Thêm Sách</button>
+</form>
+
+<hr>
+
+<!-- Bảng hiển thị danh sách -->
+<table border="1">
+    <thead>
+        <tr>
+            <th>Mã sản phẩm</th>
+            <th>Tên sách</th>
+            <th>Giá gốc</th>
+            <th>Giá sau thuế</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each books}}
+        <tr>
+            <td>{{this.productCode}}</td>
+            <td>{{this.title}}</td>
+            <td>{{this.price}}</td>
+            <td>{{this.finalPrice}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
